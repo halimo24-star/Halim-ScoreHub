@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Halim Grade Calculator - By HALIM-R</title>
+<style>
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background: linear-gradient(90deg, #89c4f4, #034078);
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    position: relative;
+  }
+  header small {
+    display: block;
+    font-weight: 400;
+    font-size: 1rem;
+    margin-top: 6px;
+    color: #d0e6ff;
+  }
+  /* Optional logo */
+  header::before {
+    content: "🔥"; /* شعار */
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.5rem;
+  }
+
+  main {
+    flex-grow: 1;
+    padding: 20px 10px 50px;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 95%;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    background: white;
+  }
+  thead tr {
+    background: #034078;
+    color: white;
+  }
+  th, td {
+    padding: 15px 10px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  tbody tr:hover {
+    background-color: #f0f4f8;
+  }
+
+  input[type=number] {
+    width: 70px;
+    padding: 8px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline-color: #034078;
+    transition: border-color 0.3s ease;
+    text-align: center;
+  }
+  input[type=number]:focus {
+    border-color: #0074d9;
+  }
+
+  button.btn-calc {
+    margin: 30px auto 10px;
+    display: block;
+    padding: 15px 45px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, #0074d9, #00aaff);
+    border: none;
+    border-radius: 25px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,164,255,0.5);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  button.btn-calc:hover {
+    transform: scale(1.07);
+    box-shadow: 0 6px 16px rgba(0,164,255,0.7);
+  }
+
+  /* Result box */
+  #result-container {
+    max-width: 400px;
+    margin: 15px auto 30px;
+    padding: 15px 20px;
+    background: #e6f0ff;
+    border-radius: 12px;
+    border: 2px solid #0074d9;
+    font-size: 1.5rem;
+    text-align: center;
+    color: #003d99;
+    font-weight: 700;
+    min-height: 50px;
+  }
+  #feedback {
+    font-style: italic;
+    color: #0074d9;
+    text-align: center;
+    font-size: 1.2rem;
+  }
+
+  /* Modal window */
+  #modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  #modal.active {
+    display: flex;
+  }
+  #modal-content {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 350px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.2);
+  }
+  #modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 2rem;
+    color: #0074d9;
+  }
+  #modal-content p {
+    font-size: 1.3rem;
+    margin-bottom: 25px;
+    color: #333;
+  }
+  #modal-content button {
+    padding: 10px 25px;
+    border: none;
+    background: #0074d9;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  #modal-content button:hover {
+    background: #005fa3;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    table, thead, tbody, tr, th, td {
+      display: block;
+      width: 100%;
+    }
+    thead tr {
+      display: none;
+    }
+    tbody tr {
+      margin-bottom: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    tbody tr td {
+      text-align: right;
+      padding-left: 50%;
+      position: relative;
+    }
+    tbody tr td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 15px;
+      top: 15px;
+      font-weight: 700;
+      color: #0074d9;
+      width: 45%;
+      white-space: nowrap;
+      text-align: left;
+    }
+    input[type=number] {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button.btn-calc {
+      width: 100%;
+      padding: 15px 0;
+      font-size: 1.3rem;
+    }
+  }
+
+  footer {
+    padding: 15px 10px;
+    text-align: center;
+    font-style: italic;
+    color: #555;
+    border-top: 1px solid #ddd;
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  Halim Grade Calculator
+  <small>By HALIM-R 🔥</small>
+</header>
+
+<main>
+  <table aria-label="Grades Table">
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Coefficient</th>
+        <th>Assignment (40%)</th>
+        <th>Exam (60%)</th>
+        <th>Final Grade</th>
+      </tr>
+    </thead>
+    <tbody id="gradeTable"></tbody>
+  </table>
+
+  <button class="btn-calc" onclick="calculate()">Calculate General Average</button>
+
+  <div id="result-container">General Average: -</div>
+  <div id="feedback"></div>
+</main>
+
+<!-- Modal -->
+<div id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+  <div id="modal-content">
+    <h2 id="modalTitle">Your Result</h2>
+    <p id="modalDesc"></p>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 - Developed with 🔥 by HALIM-R
+</footer>
+
+<script>
+const subjects = [
+  { name: "Written Expression", coef: 2, hasAssignment: true },
+  { name: "Phonetics", coef: 2, hasAssignment: true },
+  { name: "Grammar", coef: 2, hasAssignment: true },
+  { name: "University Work Technique", coef: 2, hasAssignment: true },
+  { name: "Civilization", coef: 2, hasAssignment: true },
+  { name: "Oral Expression", coef: 2, hasAssignment: true },
+  { name: "Literature", coef: 1, hasAssignment: true },
+  { name: "Digital Studies", coef: 1, hasAssignment: false },
+  { name: "Text Studies", coef: 2, hasAssignment: false },
+  { name: "French", coef: 1, hasAssignment: false },
+];
+
+// Build table rows dynamically
+function buildTable() {
+  const tbody = document.getElementById('gradeTable');
+  tbody.innerHTML = ''; // Clear existing rows
+  subjects.forEach((subject, i) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td data-label="Subject">${subject.name}</td>
+      <td data-label="Coefficient">${subject.coef}</td>
+      ${subject.hasAssignment
+        ? `<td data-label="Assignment (40%)"><input type="number" id="assignment${i}" min="0" max="20" step="0.01" placeholder="0-20"></td>
+           <td data-label="Exam (60%)"><input type="number" id="exam${i}" min="0" max="20" step="0.01" placeholder="0-20"></td>`
+        : `<td data-label="Assignment (40%)">-</td>
+           <td data-label="Exam (60%)"><input type="number" id="exam${i}" min="0" max="20" step="0.01" placeholder="0-20"></td>`
+      }
+      <td data-label="Final Grade" id="final${i}">-</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// Call it once on load
+buildTable();
+
+function calculate() {
+  let totalPoints = 0;
+  let totalCoef = subjects.reduce((sum, s) => sum + s.coef, 0);
+
+  subjects.forEach((subject, i) => {
+    let assignmentScore = subject.hasAssignment
+      ? parseFloat(document.getElementById(`assignment${i}`).value) || 0
+      : 0;
+    let examScore = parseFloat(document.getElementById(`exam${i}`).value) || 0;
+    let finalScore = subject.hasAssignment
+      ? (assignmentScore * 0.4) + (examScore * 0.6)
+      : examScore;
+
+    // Clamp scores between 0 and 20
+    finalScore = Math.min(Math.max(finalScore, 0), 20);
+
+    // Display final grade rounded to 2 decimals
+    document.getElementById(`final${i}`).textContent = finalScore.toFixed(2);
+
+    totalPoints += finalScore * subject.coef;
+  });
+
+  const average = totalPoints / totalCoef;
+  const averageRounded = average.toFixed(2);
+
+  document.getElementById('result-container').textContent = `General Average: ${averageRounded}`;
+  giveFeedback(average);
+
+  // Show modal with result
+  showModal(`Your General Average is <strong>${averageRounded}</strong>. ${getFeedbackMessage(average)}`);
+}
+
+function giveFeedback(avg) {
+  const feedbackEl = document.getElementById('feedback');
+  const msg = getFeedbackMessage(avg);
+  feedbackEl.textContent = msg.replace(/<[^>]+>/g, ''); // remove any HTML for this text container
+}
+
+function getFeedbackMessage(avg) {
+  if (avg >= 15) return "🌟 Excellent, keep it up!";
+  if (avg >= 12) return "👍 Good, but aim higher!";
+  if (avg >= 10) return "🟡 Fair, needs work.";
+  return "❌ Poor, try harder!";
+}
+
+function showModal(htmlContent) {
+  const modal = document.getElementById('modal');
+  const modalDesc = document.getElementById('modalDesc');
+  modalDesc.innerHTML = htmlContent;
+  modal.classList.add('active');
+}
+
+function closeModal() {
+  const modal = document.getElementById('modal');
+  modal.classList.remove('active');
+}
+
+// Close modal on outside click or ESC key
+window.addEventListener('click', (e) => {
+  const modal = document.getElementById('modal');
+  if (e.target === modal) closeModal();
+});
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+
+</body>
+</html>
